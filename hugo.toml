@@ -1,0 +1,7 @@
+   baseURL = "https://surysaki.github.io/"
+   languageCode = "zh-cn"
+   title = "我的个人博客"
+   theme = "PaperMod"
+
+   [params]
+     defaultTheme = "auto" # 自动适应白天/黑夜模式
