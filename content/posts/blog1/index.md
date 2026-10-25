@@ -1,5 +1,5 @@
 ---
-title: "AI安全学习路线图"
+title: "AI-map"
 date: 2026-10-25T17:21:42+08:00
 draft: false
 ---
