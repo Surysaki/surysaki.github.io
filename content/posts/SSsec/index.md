@@ -493,6 +493,8 @@ sequenceDiagram
 
 ### 一次完全权限调用
 
+#### 一次完全权限调用
+
 ```mermaid
 sequenceDiagram
     participant U as 用户
@@ -511,6 +513,10 @@ sequenceDiagram
     G-->>W: 最终回答
     W-->>UI: text_delta / tool_finished / run_finished
 ```
+
+
+
+
 
 
 
