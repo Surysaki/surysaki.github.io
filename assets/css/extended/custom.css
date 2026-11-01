@@ -7,19 +7,19 @@
 /* ---------- 1. 正文标题尺度 ----------
    PaperMod v8 默认 h1 40px / h2 32px / h3 24px / h4 16px，
    对中文长文偏大，且 h4 与正文同号导致层级糊在一起。
-   这里压到接近 lilianweng.github.io 的 28/24/18 档。 */
+   这里压到接近 lilianweng.github.io 的档位。 */
 .md-content h2 {
-  font-size: 26px;
+  font-size: 22px;
   margin: 34px auto 18px;
 }
 
 .md-content h3 {
-  font-size: 20px;
+  font-size: 18px;
   margin: 26px 0 14px;
 }
 
 .md-content h4 {
-  font-size: 17px;
+  font-size: 15px;
   margin: 24px 0 12px;
 }
 
@@ -143,31 +143,24 @@
   margin-inline-start: 1rem;
 }
 
-/* ---------- 8. 顶部导航吸顶 ----------
-   滚动时 logo、黑白切换、菜单始终贴在视口顶部。
-   背景取页面自身的底色，所以顶部不会出现一条色差带；
-   正文从下面滑过时被这条带子自然遮挡。
-   （lilianweng 那边是 v7 主题把 .logo 设成 fixed，
-     这里做成整条吸顶，手机上菜单也不会丢） */
-.header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: var(--theme);
-}
+/* ---------- 8. 左上角常驻站点名（仿 lilianweng.github.io） ----------
+   顶部不再保留吸顶条：导航菜单跟着页面滚走，正文多出一整条可视面积；
+   只把 logo + 黑白切换固定在正文栏左侧的空白里。
+   视口不够宽（<1200px）时自动退回正常排版，避免压住正文。 */
+@media (min-width: 1240px) {
+  .header-nav {
+    justify-content: flex-end; /* logo 脱离文档流后，菜单仍然靠右 */
+  }
 
-/* 首页 / 归档 / 搜索 / 标签页的页面底色是 --code-bg，头部要跟着走 */
-body.list .header {
-  background: var(--code-bg);
-}
-
-[data-theme="dark"] body.list .header {
-  background: var(--theme);
-}
-
-/* 点目录锚点跳转时，标题别被吸顶栏盖住 */
-html {
-  scroll-padding-top: calc(var(--header-height) + 12px);
+  .logo {
+    position: fixed;
+    top: 0;
+    /* 用「右边距」定位：永远贴在正文栏左侧 16px 处，不用猜 logo 宽度 */
+    right: calc(50% + var(--main-width) / 2 + 16px);
+    left: auto;
+    height: var(--header-height);
+    z-index: 100;
+  }
 }
 
 /* ---------- 9. Mermaid 图 ----------
@@ -206,5 +199,43 @@ html {
   font-size: 14px;
   line-height: 1.5;
 }
+
+/* ---------- 10. 正文字号整体收一档 ----------
+   只动 font-size，间距/行高保持主题原样 */
+body {
+  font-size: 16px;
+}
+
+.post-single .post-title {
+  font-size: 34px;
+}
+
+.md-content h1 {
+  font-size: 30px;
+}
+
+/* 代码块原来跟随 18px 正文，现在单独钉住，别跟着缩没 */
+.md-content pre code {
+  font-size: 13.5px;
+}
+
+.md-content :not(pre) > code {
+  font-size: 0.88em;
+}
+
+/* ---------- 11. 首页头像 ---------- */
+.home-avatar {
+  margin-bottom: 18px;
+}
+
+.home-avatar img {
+  display: block;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--border);
+}
+
 
 

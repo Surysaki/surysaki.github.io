@@ -427,37 +427,38 @@ save_finding(title, severity, description, target="", evidence="")
 
 ### 分层图示
 
-```text
-┌──────────────────────────────────────────────────────────────┐
-│                        PySide6 Desktop UI                    │
-│  Sidebar · ChatView · Composer · SettingsDialog · ApprovalBar│
-│  浅色/深色主题 · 目标范围 · 完全权限开关                        │
-└───────────────────────────────┬──────────────────────────────┘
-                                │ Qt Signals / Slots
-┌───────────────────────────────▼──────────────────────────────┐
-│                        AgentWorker (QThread)                 │
-│  独立 asyncio 事件循环 · 流式事件桥接 · 审批 Future · 取消      │
-└───────────────────────────────┬──────────────────────────────┘
-                                │ LangGraph StateGraph
-┌───────────────────────────────▼──────────────────────────────┐
-│ agent 节点 ──► 是否需要审批? ──► approval 节点（可选）         │
-│    │                    │                    │               │
-│    │ LangChain Model    │ 不需要审批          │ interrupt()   │
-│    ▼                    ▼                    ▼               │
-│  ChatOpenAI /      tools 节点 ◄──────── Command(resume=...)  │
-│  ChatAnthropic          │                                    │
-│  DemoChatModel          ├─ http_request                      │
-│                         ├─ dns_lookup                        │
-│                         ├─ tcp_probe                         │
-│                         ├─ run_command                       │
-│                         └─ save_finding                      │
-│                              │                               │
-│           Scope Policy / Audit / UI Events                   │
-└───────────────────────────────┬──────────────────────────────┘
-                                │ JSON 持久化
-┌───────────────────────────────▼──────────────────────────────┐
-│ ConversationStore · SettingsStore · AuditLog · workspace     │
-└──────────────────────────────────────────────────────────────┘
+```mermaid
+%%{init: {"flowchart": {"nodeSpacing": 40, "rankSpacing": 45}}}%%
+flowchart TB
+    UI["PySide6 Desktop UI<br/>Sidebar · ChatView · Composer · SettingsDialog · ApprovalBar<br/>浅色/深色主题 · 目标范围 · 完全权限开关"]
+
+    W["AgentWorker (QThread)<br/>独立 asyncio 事件循环 · 流式事件桥接 · 审批 Future · 取消"]
+
+    subgraph SG["LangGraph StateGraph"]
+        direction TB
+        A["agent 节点"]
+        Q{"是否需要审批?"}
+        AP["approval 节点（可选）"]
+        T["tools 节点"]
+        M["LangChain Model<br/>ChatOpenAI / ChatAnthropic / DemoChatModel"]
+        TL["http_request<br/>dns_lookup<br/>tcp_probe<br/>run_command<br/>save_finding"]
+        P["Scope Policy / Audit / UI Events"]
+        R["Command(resume=...)"]
+    end
+
+    DB["ConversationStore · SettingsStore · AuditLog · workspace"]
+
+    UI -- "Qt Signals / Slots" --> W
+    W --> A
+    A --> Q
+    A --> M
+    Q -- "需要审批" --> AP
+    Q -- "不需要审批" --> T
+    AP -- "interrupt()" --> R
+    R --> T
+    T --> TL
+    T --> P
+    P -- "JSON 持久化" --> DB
 ```
 
 ### 一次带审批的调用（标准模式）
@@ -526,8 +527,8 @@ sequenceDiagram
 
 ## 结语
 
-​	从10月份开始打算做 AI 安全的时候，我就在纠结要从哪个分支开始——**AI for Security** or **Security for AI**。思虑再三后还是决定先设计一款 **Pentest Agent**（AI for Security）。其实改变学习路线是一件很艰难的事情，从去年冬天腾讯举办第一届智能攻防挑战赛开始，我就一直在关注这条赛道，犹豫再三，迟迟未行动。对于那时的我而言，补充完传统安全的技术栈，尽早进入安全大厂实习才是优先级最高的事。
+从10月份开始打算做 AI 安全的时候，我就在纠结要从哪个分支开始——**AI for Security** or **Security for AI**。思虑再三后还是决定先设计一款 **Pentest Agent**（AI for Security）。其实改变学习路线是一件很艰难的事情，从去年冬天腾讯举办第一届智能攻防挑战赛开始，我就一直在关注这条赛道，犹豫再三，迟迟未行动。对于那时的我而言，补充完传统安全的技术栈，尽早进入安全大厂实习才是优先级最高的事。
 
-​	我不知道攻防Agent会不会是安全行业的机遇，投入自己的时间和精力在上面也许会导致南辕北辙的局面。我把它看做一场赌局，而我将把未来三个月的时间作为赌注。这半个月来，我都在学习 Agent 开发，包括 LangChain、LangGraph 这种主流框架，说实话我并没有吃的很透，完全是一个初学者的水平，包括这个项目涉及到的知识点也很浅。我找不到太多融合安全的 Agent 项目（保姆级的那种），只能依葫芦画瓢，像模像样的做着。
+我不知道攻防Agent会不会是安全行业的机遇，投入自己的时间和精力在上面也许会导致南辕北辙的局面。我把它看做一场赌局，而我将把未来三个月的时间作为赌注。这半个月来，我都在学习 Agent 开发，包括 LangChain、LangGraph 这种主流框架，说实话我并没有吃的很透，完全是一个初学者的水平，包括这个项目涉及到的知识点也很浅。我找不到太多融合安全的 Agent 项目（保姆级的那种），只能依葫芦画瓢，像模像样的做着。
 
-​	SSsec 的槽点还有很多，甚至称不上是一个合格的作品。但我也借此机会更新了自己的 github 和个人博客，在这条路上踩下了油门。
+SSsec 的槽点还有很多，甚至称不上是一个合格的作品。但我也借此机会更新了自己的 github 和个人博客，在这条路上踩下了油门。

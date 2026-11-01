@@ -44,6 +44,7 @@ summaryLength = 80               # 自动摘要长度（中文字）
   [params.homeInfoParams]
     Title = "👋 欢迎来到我的博客"
     Content = "你好，我是 Surysaki，这里记录 AI 安全、Agent 与工程实践的学习笔记。"
+    Avatar = "/images/avatar.jpg"
 
   [[params.socialIcons]]
     name = "github"
