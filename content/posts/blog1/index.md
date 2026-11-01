@@ -1,12 +1,18 @@
 ---
-title: "AI-map"
+title: "AI 安全学习路线图 · 红队转型版 V1.0"
 date: 2026-10-25T17:21:42+08:00
 draft: false
+description: "12 周从 Python 工程化走到 AI 攻防面试的学习路线：LLM 应用、Prompt 注入、Agent 评测、MCP / RAG 安全。"
+summary: "12 周冲刺路线图：Python 工程化与 LLM 应用 → Prompt 注入与越狱 → 深度攻击面与自动化评测 → AI for Security → 面试投递。"
+tags: ["AI 安全", "学习路线", "Agent"]
+categories: ["笔记"]
+ShowToc: true
+ShowReadingTime: true
+ShowCodeCopyButtons: true
 ---
 
-# AI安全学习路线图 · 红队转型版 V1.0
-
-> 12周冲刺 · 每周6天 · 起始 2026/10/20 · 目标：Agent安全评测 / AI攻防实习
+> 12 周冲刺 · 每周 6 天 · 起始 2026/10/20 · 目标：Agent 安全评测 / AI 攻防实习
+>
 > 用法：此为 `AI安全学习路线图.html` 的文字源。把本文件内容贴到 markmap.js.org / 支持 markmap 的编辑器，即可渲染为同款思维导图。
 
 ---
@@ -125,4 +131,4 @@ draft: false
 - **面试与复盘（W12 ｜ 01/05–01/10）**：面试集中期 / 当天复盘写博客 / 迭代答案 / 1 月中入职实习
 - **⚠️ 避坑三忠告**：别躲学习舒适区（每周必有产出）/ 别堆关键词（每点要有踩坑故事）/ 别丢攻防优势（红队 × AI 主线）
 
-![1.png](1.png)
+{{< figure src="1.png" caption="多模态深度学习框架示意图" >}}

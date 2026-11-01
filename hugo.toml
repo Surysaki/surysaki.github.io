@@ -1,7 +1,116 @@
-   baseURL = "https://surysaki.github.io/"
-   languageCode = "zh-cn"
-   title = "我的个人博客"
-   theme = "PaperMod"
+# ============================================================
+#  站点主配置
+#  参考 lilianweng.github.io 的做法：同一个 PaperMod 主题，
+#  差距全在配置 / CSS / 写法上，所以这里把它配满。
+# ============================================================
 
-   [params]
-     defaultTheme = "auto" # 自动适应白天/黑夜模式
+baseURL = "https://surysaki.github.io/"
+defaultContentLanguage = "zh"
+hasCJKLanguage = true            # 中文按字分词：摘要、字数、阅读时长才准
+title = "Surysaki 的博客"
+theme = "PaperMod"
+enableRobotsTXT = true
+enableEmoji = true               # 支持 :smile: 之类
+summaryLength = 80               # 自动摘要长度（中文字）
+
+[pagination]
+  pagerSize = 10
+
+# 搜索页依赖 /index.json，必须给 home 加 JSON 输出
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+
+[params]
+  author = "Surysaki"
+  description = "记录 AI 安全、Agent 与工程实践的学习笔记。"
+  defaultTheme = "auto"          # 跟随系统，右上角可手动切换
+  DateFormat = "2006-01-02"      # 不设会变成英文 November 1, 2026
+
+  ShowReadingTime = true
+  ShowWordCount = true
+  ShowShareButtons = false
+  ShowPostNavLinks = true        # 文末上一篇/下一篇
+  ShowBreadCrumbs = true
+  ShowCodeCopyButtons = true     # 代码块右上角「复制」
+  ShowRssButtonInSectionTermList = true
+  ShowToc = true                 # 全站默认出目录，单篇可用 ShowToc: false 关掉
+  TocOpen = false
+  UseHugoToc = true              # 用 Hugo 原生目录，层级受下方 startLevel/endLevel 控制
+  ShowFullTextinRSS = true
+
+  mainSections = ["posts"]
+
+  # ---------- 首页首屏：欢迎语 + 社交图标（她的 home-info 就是这块） ----------
+  [params.homeInfoParams]
+    Title = "👋 欢迎来到我的博客"
+    Content = "你好，我是 Surysaki，这里记录 AI 安全、Agent 与工程实践的学习笔记。"
+
+  [[params.socialIcons]]
+    name = "github"
+    title = "GitHub"
+    url = "https://github.com/surysaki"
+
+  [[params.socialIcons]]
+    name = "rss"
+    title = "RSS"
+    url = "index.xml"
+
+  # ---------- 搜索页参数 ----------
+  [params.fuseOpts]
+    isCaseSensitive = false
+    isFuzzySearch = true
+    minMatchCharLength = 2
+    findAllMatches = false
+    threshold = 0.3
+    ignoreLocation = true
+    keys = ["title", "permalink", "summary", "content"]
+
+# ------------------------------------------------------------
+#  Markdown 渲染
+# ------------------------------------------------------------
+[markup]
+  [markup.goldmark.renderer]
+    unsafe = true                # 允许正文手写 <figure>/<div>，图注才能自定义
+
+  [markup.highlight]
+    noClasses = false
+    lineNos = false
+
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 3                 # 目录只到三级，避免 17 个 h4 全塞进目录
+
+  # 让 $…$ / $$…$$ 原样透传给 MathJax，不被 Markdown 转义搅乱
+  [markup.goldmark.extensions.passthrough]
+    enable = true
+  [markup.goldmark.extensions.passthrough.delimiters]
+    block = [['\[', '\]'], ['$$', '$$']]
+    inline = [['\(', '\)'], ['$', '$']]
+
+# ------------------------------------------------------------
+#  顶部导航
+#  注意：identifier = "search" 依赖 content/search.md，文件不在会构建失败
+# ------------------------------------------------------------
+[[menu.main]]
+  identifier = "posts"
+  name = "文章"
+  url = "/"
+  weight = 1
+
+[[menu.main]]
+  identifier = "archives"
+  name = "归档"
+  url = "/archives/"
+  weight = 2
+
+[[menu.main]]
+  identifier = "search"
+  name = "搜索"
+  url = "/search/"
+  weight = 3
+
+[[menu.main]]
+  identifier = "tags"
+  name = "标签"
+  url = "/tags/"
+  weight = 4

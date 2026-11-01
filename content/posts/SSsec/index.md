@@ -1,10 +1,15 @@
 ---
 title: "【AI for Security】SSsec（AI 自主渗透测试系统）"
 date: 2026-11-01
-draft: false  # 确保这里是 false，如果是 true 就不会发布
+draft: false
+description: "SSsec 是一个面向授权安全测试的本地桌面 AI Agent Harness：PySide6 界面 + LangGraph / LangChain 运行时。本文记录它的架构设计、审批旁路与实现取舍。"
+summary: "首个版本的 AI 自主渗透测试系统：LangGraph 状态机、人工审批旁路、Checkpointer 断点恢复，以及五个内置工具的设计取舍。"
+tags: ["AI 安全", "Agent", "LangGraph", "渗透测试"]
+categories: ["项目"]
+ShowToc: true
+ShowReadingTime: true
+ShowCodeCopyButtons: true
 ---
-
-# 【AI for Security】SSsec（AI 自主渗透测试系统）
 
 ## 前言
 
@@ -13,36 +18,37 @@ draft: false  # 确保这里是 false，如果是 true 就不会发布
 
 本项目（SSsec v0.1.0）在 Tsecbench 平台的跑分测试结果如下：
 
-**Tsecbench v1** ：
+**Tsecbench v1**：
 
 综合得分 **55.7**  获得点数 **13750**  完成率 **59.5%**  答对Flag **44/74**
 
 **排名：158名**
 
-![img.png](img.png)
-**bctf-2026** :
+{{< figure src="img.png" caption="Tsecbench v1 跑分：综合 55.7，排名 158" >}}
+
+**bctf-2026**：
 
 综合得分 **36.92**  获得点数 **8200**  完成率 **35.9%**  答对Flag **14/39**
 
 **排名：50名**
 
-![img_1.png](img_1.png)
+{{< figure src="img_1.png" caption="bctf-2026 跑分：综合 36.92，排名 50" >}}
 
-**XBOW Validation Benchmarks** :
+**XBOW Validation Benchmarks**：
 
 综合得分 **53**  获得点数 **15000**  完成率 **57.7%**  答对Flag **60/104**
 
 **排名：23名**
 
-![img_2.png](img_2.png)
+{{< figure src="img_2.png" caption="XBOW Validation Benchmarks 跑分：综合 53，排名 23" >}}
 
-**Cybench** :
+**Cybench**：
 
 综合得分 **18.27**  获得点数 **3800**  完成率 **20%**  答对Flag **8/40**
 
 **排名：20名**
 
-![img_3.png](img_3.png)
+{{< figure src="img_3.png" caption="Cybench 跑分：综合 18.27，排名 20" >}}
 
 
 
@@ -59,7 +65,7 @@ draft: false  # 确保这里是 false，如果是 true 就不会发布
 
 **当前版本：v0.1.0（首个版本）**
 
-![img_4.png](img_4.png)
+{{< figure src="img_4.png" caption="SSsec v0.1.0 桌面端主界面：对话区、测试目标与权限设置" >}}
 
 ---
 
@@ -136,7 +142,7 @@ agent_node ──(最后一条 AIMessage 没有 tool_calls)──► END
 
 它负责把系统提示词 + 整段对话历史交给模型；然后流式接收模型的输出，一边接收一边把文字和思考过程推给界面；再把流式片段拼成一条完整的 AI 消息；最后从这条消息里读出模型的意图（纯回答，还是要调工具、调哪几个、参数是什么）。
 
-**产出：**它会生成一条完整的 AI 消息，携带工具调用的请求或者最终回答。
+**产出：** 它会生成一条完整的 AI 消息，携带工具调用的请求或者最终回答。
 
 
 
@@ -146,7 +152,7 @@ agent_node ──(最后一条 AIMessage 没有 tool_calls)──► END
 
 它会把本轮要调的工具整理成人类可读的清单：工具名、参数、是否需要确认；并且主动让整个图停下来，把清单抛给界面，进入等待状态；最后用户点批准或拒绝后，图从这个断点恢复，决策结果被带回流程里。
 
-**产出：**得到审批结论后，存在状态里，供下一个节点读取。也是整个 Agent 里唯一会让人工介入的环节。
+**产出：** 得到审批结论后，存在状态里，供下一个节点读取。也是整个 Agent 里唯一会让人工介入的环节。
 
 
 
@@ -156,7 +162,7 @@ agent_node ──(最后一条 AIMessage 没有 tool_calls)──► END
 
 先读取审批结论，先判断这一轮是否被拒绝；如果被拒绝，则不会调用工具；如果放行，则逐个执行工具，拿到结果；对结果做截断、判断成功/失败；把每个工具的结果包装成一条工具消息，追加回对话历史。
 
-**产出：**把工具调用后的结果作为模型下一轮思考的输入
+**产出：** 把工具调用后的结果作为模型下一轮思考的输入
 
 
 
@@ -419,7 +425,7 @@ save_finding(title, severity, description, target="", evidence="")
 | 配置与密钥 | 本地 JSON + Windows DPAPI                                    |
 | 打包       | PyInstaller（one-folder）                                    |
 
-#### 分层图示
+### 分层图示
 
 ```text
 ┌──────────────────────────────────────────────────────────────┐
@@ -454,7 +460,7 @@ save_finding(title, severity, description, target="", evidence="")
 └──────────────────────────────────────────────────────────────┘
 ```
 
-#### 一次带审批的调用（标准模式）
+### 一次带审批的调用（标准模式）
 
 ```mermaid
 sequenceDiagram
@@ -485,7 +491,7 @@ sequenceDiagram
     UI->>UI: 更新会话并原子写入 JSON
 ```
 
-#### 一次完全权限调用
+### 一次完全权限调用
 
 ```mermaid
 sequenceDiagram

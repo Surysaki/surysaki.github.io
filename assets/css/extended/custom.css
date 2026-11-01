@@ -1,0 +1,139 @@
+/* ============================================================
+   PaperMod 自定义样式
+   放在 assets/css/extended/ 下会被自动拼到主题样式之后
+   （head.html 里的 resources.Match "css/extended/*.css"）
+   ============================================================ */
+
+/* ---------- 1. 正文标题尺度 ----------
+   PaperMod v8 默认 h1 40px / h2 32px / h3 24px / h4 16px，
+   对中文长文偏大，且 h4 与正文同号导致层级糊在一起。
+   这里压到接近 lilianweng.github.io 的 28/24/18 档。 */
+.md-content h2 {
+  font-size: 26px;
+  margin: 34px auto 18px;
+}
+
+.md-content h3 {
+  font-size: 20px;
+  margin: 26px 0 14px;
+}
+
+.md-content h4 {
+  font-size: 17px;
+  margin: 24px 0 12px;
+}
+
+/* ---------- 2. 中文阅读节奏 ---------- */
+.md-content {
+  line-height: 1.8;
+}
+
+.md-content p {
+  margin-bottom: 1.05em;
+}
+
+.md-content li p {
+  margin-bottom: 0;
+}
+
+/* ---------- 3. 图片 + 图注自动编号 ----------
+   用法：{{< figure src="x.png" caption="说明" >}}
+   输出：图 1：说明（居中、灰色、75% 宽） */
+.md-content {
+  counter-reset: fig;
+}
+
+.md-content figure {
+  counter-increment: fig;
+  margin: 1.6rem 0;
+}
+
+.md-content figure > img {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  height: auto;
+}
+
+.md-content figure > figcaption {
+  width: 75%;
+  margin: 10px auto 0;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--secondary);
+}
+
+/* figure 短代码会把 caption 包一层 <p>，设成 inline 才能和「图 1：」同行 */
+.md-content figure > figcaption > p {
+  display: inline;
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+}
+
+.md-content figure > figcaption::before {
+  content: "图 " counter(fig) "：";
+  font-weight: 600;
+}
+
+/* 单图控宽：{{< figure src="x.png" caption="…" class="w-60" >}} */
+.md-content figure.w-60 > img {
+  width: 60%;
+}
+
+.md-content figure.w-40 > img {
+  width: 40%;
+}
+
+/* ---------- 4. 公式：太宽时横向滚动，别撑破版心 ---------- */
+.md-content mjx-container[display="true"] {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 2px 0;
+}
+
+/* ---------- 5. 宽表格横向滚动（5 列表格在手机上的场景） ---------- */
+.md-content .table-wrap {
+  overflow-x: auto;
+  margin-bottom: var(--content-gap);
+}
+
+.md-content .table-wrap > table {
+  margin-bottom: 0;
+}
+
+/* 手机上表格会撑破版心（单元格 min-width 80px × 5 列 > 390px），
+   这里让表格自己横向滚动，不要把整页撑宽 */
+@media (max-width: 768px) {
+  .md-content table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+  }
+}
+
+/* ---------- 6. 可选：蓝色「更新提示」块 ----------
+   正文里写：<div class="update">📝 2026-11-08 更新：补了 XX 章节</div> */
+.md-content .update {
+  border-left: 4px solid #2f81f7;
+  background: rgba(47, 129, 247, 0.08);
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin: 22px 0;
+}
+
+.dark .md-content .update {
+  background: rgba(47, 129, 247, 0.15);
+}
+
+/* ---------- 7. 目录：字号略收，和正文区分 ---------- */
+.toc {
+  font-size: 14.5px;
+}
+
+.toc .inner ul ul {
+  margin-inline-start: 1rem;
+}
