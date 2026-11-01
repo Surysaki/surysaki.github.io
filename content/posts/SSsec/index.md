@@ -1,6 +1,6 @@
 ---
-title: "【AI for Security】SSsec（AI 自主渗透测试系统）"
-date: 2026-11-01
+title: "AI for Security：SSsec（攻防Agent的初步开发）"
+date: 2026-11-02
 draft: false
 description: "SSsec 是一个面向授权安全测试的本地桌面 AI Agent Harness：PySide6 界面 + LangGraph / LangChain 运行时。本文记录它的架构设计、审批旁路与实现取舍。"
 summary: "首个版本的 AI 自主渗透测试系统：LangGraph 状态机、人工审批旁路、Checkpointer 断点恢复，以及五个内置工具的设计取舍。"
@@ -24,7 +24,7 @@ ShowCodeCopyButtons: true
 
 **排名：158名**
 
-{{< figure src="img.png" caption="Tsecbench v1 跑分：综合 55.7，排名 158" >}}
+{{< figure src="img.png" caption="Tsecbench v1 跑分：综合分数 55.7，排名 158" >}}
 
 **bctf-2026**：
 
@@ -32,7 +32,7 @@ ShowCodeCopyButtons: true
 
 **排名：50名**
 
-{{< figure src="img_1.png" caption="bctf-2026 跑分：综合 36.92，排名 50" >}}
+{{< figure src="img_1.png" caption="bctf-2026 跑分：综合分数 36.92，排名 50" >}}
 
 **XBOW Validation Benchmarks**：
 
@@ -40,7 +40,7 @@ ShowCodeCopyButtons: true
 
 **排名：23名**
 
-{{< figure src="img_2.png" caption="XBOW Validation Benchmarks 跑分：综合 53，排名 23" >}}
+{{< figure src="img_2.png" caption="XBOW Validation Benchmarks 跑分：综合分数 53，排名 23" >}}
 
 **Cybench**：
 
@@ -48,7 +48,7 @@ ShowCodeCopyButtons: true
 
 **排名：20名**
 
-{{< figure src="img_3.png" caption="Cybench 跑分：综合 18.27，排名 20" >}}
+{{< figure src="img_3.png" caption="Cybench 跑分：综合分数 18.27，排名 20" >}}
 
 
 
@@ -434,7 +434,7 @@ flowchart TB
 
     W["AgentWorker (QThread)<br/>独立 asyncio 事件循环 · 流式事件桥接 · 审批 Future · 取消"]
 
-    subgraph SG[" "]
+    subgraph SG["LangGraph 运行时"]
         direction TB
         A["agent 节点"]
         Q{"是否需要审批?"}
