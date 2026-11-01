@@ -7,6 +7,10 @@
 baseURL = "https://surysaki.github.io/"
 defaultContentLanguage = "zh"
 hasCJKLanguage = true            # 中文按字分词：摘要、字数、阅读时长才准
+# 让不带时区的日期按北京时间解析。
+# 不设的话 date: 2026-11-02 会被当成 UTC 零点（= 北京 08:00），
+# 当天凌晨构建时文章会被判定为「未来文章」而整篇不发布。
+timeZone = "Asia/Shanghai"
 title = "Surysaki 的博客"
 theme = "PaperMod"
 enableRobotsTXT = true
