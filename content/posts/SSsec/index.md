@@ -428,20 +428,20 @@ save_finding(title, severity, description, target="", evidence="")
 ### 分层图示
 
 ```mermaid
-%%{init: {"flowchart": {"nodeSpacing": 40, "rankSpacing": 45}}}%%
+%%{init: {"flowchart": {"nodeSpacing": 36, "rankSpacing": 40, "wrappingWidth": 430}}}%%
 flowchart TB
     UI["PySide6 Desktop UI<br/>Sidebar · ChatView · Composer · SettingsDialog · ApprovalBar<br/>浅色/深色主题 · 目标范围 · 完全权限开关"]
 
     W["AgentWorker (QThread)<br/>独立 asyncio 事件循环 · 流式事件桥接 · 审批 Future · 取消"]
 
-    subgraph SG["LangGraph StateGraph"]
+    subgraph SG[" "]
         direction TB
         A["agent 节点"]
         Q{"是否需要审批?"}
         AP["approval 节点（可选）"]
         T["tools 节点"]
         M["LangChain Model<br/>ChatOpenAI / ChatAnthropic / DemoChatModel"]
-        TL["http_request<br/>dns_lookup<br/>tcp_probe<br/>run_command<br/>save_finding"]
+        TL["tools：http_request · dns_lookup · tcp_probe<br/>run_command · save_finding"]
         P["Scope Policy / Audit / UI Events"]
         R["Command(resume=...)"]
     end
@@ -449,7 +449,7 @@ flowchart TB
     DB["ConversationStore · SettingsStore · AuditLog · workspace"]
 
     UI -- "Qt Signals / Slots" --> W
-    W --> A
+    W -- "LangGraph StateGraph" --> A
     A --> Q
     A --> M
     Q -- "需要审批" --> AP
@@ -493,8 +493,6 @@ sequenceDiagram
 ```
 
 ### 一次完全权限调用
-
-#### 一次完全权限调用
 
 ```mermaid
 sequenceDiagram

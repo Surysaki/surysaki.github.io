@@ -237,5 +237,88 @@ body {
   border: 1px solid var(--border);
 }
 
+/* ---------- 12. 左侧可收起目录 ----------
+   宽屏时固定在左上角站点名下方、正文栏左侧的空白里；
+   窄屏（<1240px）隐藏，继续用正文里的那条折叠目录。 */
+.toc-side {
+  display: none;
+}
+
+@media (min-width: 1240px) {
+  .toc-side {
+    display: block;
+    position: fixed;
+    top: calc(var(--header-height) + 6px);
+    /* 左边缘比 logo 再往左几个字，右边留 32px 不压正文 */
+    right: calc(50% + var(--main-width) / 2 + 32px);
+    width: 232px;
+    max-height: calc(100vh - var(--header-height) - 96px);
+    overflow-y: auto;
+    padding-right: 6px;
+    font-size: 13.5px;
+    line-height: 1.65;
+    z-index: 90;
+  }
+
+  /* 宽屏已经有左侧目录，正文里那条就不重复了 */
+  .post-single details.toc {
+    display: none;
+  }
+}
+
+.toc-side summary {
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--secondary);
+  margin-bottom: 6px;
+}
+
+.toc-side summary::-webkit-details-marker {
+  display: none;
+}
+
+.toc-side summary::before {
+  content: "▾ ";
+}
+
+.toc-side details:not([open]) summary::before {
+  content: "▸ ";
+}
+
+.toc-side ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.toc-side ul ul {
+  padding-left: 12px;
+}
+
+.toc-side a {
+  display: block;
+  padding: 1px 0 1px 8px;
+  color: var(--secondary);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+}
+
+.toc-side a:hover {
+  color: var(--primary);
+  border-left-color: var(--tertiary);
+}
 
 
+
+
+
+/* ---------- 13. 表格字号与正文一致 ----------
+   实测 td/th 与正文同为 16px（继承 .md-content），
+   这里显式钉住，避免主题升级后又变大 */
+.md-content table { /* table-font-unify */
+  font-size: 1em;
+}

@@ -1,0 +1,15 @@
+{{- /* 左侧可收起目录：只有开了 ShowToc 且正文真的有标题时才输出。
+       仅在宽屏显示（见 custom.css 第 12 节），窄屏仍用正文里的折叠目录。 */ -}}
+{{- if (.Param "ShowToc") }}
+{{- $toc := .TableOfContents }}
+{{- if (in $toc "<ul>") }}
+<aside class="toc-side">
+    <details open>
+        <summary>目录</summary>
+        <div class="toc-side-inner">
+            {{ $toc | safeHTML }}
+        </div>
+    </details>
+</aside>
+{{- end }}
+{{- end }}
