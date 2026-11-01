@@ -129,6 +129,11 @@
   background: rgba(47, 129, 247, 0.15);
 }
 
+/* v8 主题的深色开关是 <html data-theme="dark">，不是 .dark 类 */
+[data-theme="dark"] .md-content .update {
+  background: rgba(47, 129, 247, 0.15);
+}
+
 /* ---------- 7. 目录：字号略收，和正文区分 ---------- */
 .toc {
   font-size: 14.5px;
@@ -137,3 +142,69 @@
 .toc .inner ul ul {
   margin-inline-start: 1rem;
 }
+
+/* ---------- 8. 顶部导航吸顶 ----------
+   滚动时 logo、黑白切换、菜单始终贴在视口顶部。
+   背景取页面自身的底色，所以顶部不会出现一条色差带；
+   正文从下面滑过时被这条带子自然遮挡。
+   （lilianweng 那边是 v7 主题把 .logo 设成 fixed，
+     这里做成整条吸顶，手机上菜单也不会丢） */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--theme);
+}
+
+/* 首页 / 归档 / 搜索 / 标签页的页面底色是 --code-bg，头部要跟着走 */
+body.list .header {
+  background: var(--code-bg);
+}
+
+[data-theme="dark"] body.list .header {
+  background: var(--theme);
+}
+
+/* 点目录锚点跳转时，标题别被吸顶栏盖住 */
+html {
+  scroll-padding-top: calc(var(--header-height) + 12px);
+}
+
+/* ---------- 9. Mermaid 图 ----------
+   正文里 ```mermaid 代码块由 render-codeblock-mermaid.html 输出成
+   <pre class="mermaid">，前端画成 SVG 后这里把代码块的外壳去掉 */
+.md-content pre.mermaid {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  margin: 1.8rem 0;
+  text-align: center;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  font-family: inherit;
+}
+
+.md-content pre.mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* 手机上 6 个参与者的时序图缩到 320px 就看不清了：
+   给个下限，让它横向滚动而不是无限缩小 */
+@media (max-width: 768px) {
+  .md-content pre.mermaid svg {
+    min-width: 460px;
+  }
+}
+
+/* 万一 CDN 没加载出来：退化成普通源码块，至少能读 */
+.md-content pre.mermaid:not([data-processed]) {
+  background: var(--code-bg);
+  padding: 10px;
+  border-radius: var(--radius);
+  text-align: left;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+

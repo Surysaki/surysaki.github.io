@@ -1,0 +1,4 @@
+{{- /* 代码块渲染钩子：```mermaid → 交给前端 Mermaid 画成图
+       Hugo 会按上下文自动转义 .Inner，浏览器 textContent 取回原文 */ -}}
+{{- .Page.Store.Set "hasMermaid" true -}}
+<pre class="mermaid">{{ .Inner }}</pre>

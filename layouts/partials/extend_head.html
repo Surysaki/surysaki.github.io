@@ -14,3 +14,71 @@
 </script>
 <script id="MathJax-script" async
   src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+{{- /* Mermaid：只有真的写了 ```mermaid 的页面才加载（约 3.5MB，别全站引） */ -}}
+{{- if (in .RawContent "```mermaid") }}
+<script src="{{ "js/mermaid.min.js" | relURL }}" defer></script>
+<script>
+  (function () {
+    function isDark() {
+      return document.documentElement.getAttribute('data-theme') === 'dark';
+    }
+
+    // 用底层的 mermaid.render() 逐张画：它不依赖节点上的 data-processed，
+    // 同一个节点在切换主题后也能重画（run() 会跳过已处理过的节点）。
+    function render() {
+      if (!window.mermaid) return;
+
+      var nodes = Array.prototype.slice.call(document.querySelectorAll('pre.mermaid'));
+      if (!nodes.length) return;
+
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: isDark() ? 'dark' : 'default',
+        securityLevel: 'strict',
+        fontFamily: 'inherit'
+      });
+
+      nodes.forEach(function (n, i) {
+        var src = n.dataset.src || n.textContent; // 第一次进来时记下源码
+        n.dataset.src = src;
+        var id = 'mmd-' + i + '-' + Math.random().toString(36).slice(2, 8);
+
+        mermaid.render(id, src).then(function (res) {
+          n.innerHTML = res.svg;
+          n.setAttribute('data-processed', 'true');
+          if (res.bindFunctions) res.bindFunctions(n);
+        }).catch(function (err) {
+          n.removeAttribute('data-processed');
+          n.dataset.err = (err && err.message) ? err.message : String(err);
+          console.warn('[mermaid]', err);
+        });
+      });
+    }
+
+    // mermaid 是 defer 加载的，可能晚于 DOMContentLoaded，轮询等它到位后再画一次
+    function boot() {
+      if (window.mermaid) { render(); return; }
+      var tries = 0;
+      var timer = setInterval(function () {
+        if (window.mermaid) { clearInterval(timer); render(); }
+        else if (++tries > 100) { clearInterval(timer); }
+      }, 100);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', boot);
+    } else {
+      boot();
+    }
+
+    // 深浅色切换时重绘：直接盯 <html data-theme> 的变化，
+    // 不去抢主题自己的按钮事件，顺序上更保险
+    var pending = null;
+    new MutationObserver(function () {
+      clearTimeout(pending);
+      pending = setTimeout(render, 100);
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  })();
+</script>
+{{- end }}
