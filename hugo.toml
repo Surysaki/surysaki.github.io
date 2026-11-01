@@ -73,12 +73,12 @@ summaryLength = 80               # 自动摘要长度（中文字）
   # ---------- favicon ----------
   # 放在 /icons/ 独立目录：换路径能强制浏览器重新抓取（favicon 缓存极顽固）
   [params.assets]
-    favicon = "/icons/favicon.ico"
-    favicon16x16 = "/icons/favicon-16.png"
-    favicon32x32 = "/icons/favicon-32.png"
-    apple_touch_icon = "/icons/apple-touch-icon.png"
+    favicon = "/icons/avatar.ico"
+    favicon16x16 = "/icons/avatar-16.png"
+    favicon32x32 = "/icons/avatar-32.png"
+    apple_touch_icon = "/icons/avatar-touch.png"
     # Safari 固定标签页；主题默认指向一个不存在的 svg，这里指到 png 免得 404
-    safari_pinned_tab = "/icons/favicon.png"
+    safari_pinned_tab = "/icons/avatar-256.png"
 
 
 # ------------------------------------------------------------
