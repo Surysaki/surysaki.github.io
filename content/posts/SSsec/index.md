@@ -93,41 +93,42 @@ class AgentState(TypedDict, total=False):
 
 #### 2. 图拓扑
 
-```
-START
-  │
-  ▼
-agent_node ──(最后一条 AIMessage 没有 tool_calls)──► END
-  │
-  ├──(有 tool_calls，且本轮无需审批)──► tools_node ──► agent_node
-  │
-  └──(有 tool_calls，且任一调用需要审批)──► approval_node
-                                              │ interrupt()
-                                              ▼
-                                    等待 UI 决策 / Command(resume=...)
-                                              │
-                                              ▼
-                                          tools_node ──► agent_node
+```mermaid
+%%{init: {"flowchart": {"nodeSpacing": 34, "rankSpacing": 34, "wrappingWidth": 380}}}%%
+flowchart TB
+    START(["START"]) --> AG["agent_node"]
+    AG --> Q1{"最后一条 AIMessage<br/>有 tool_calls 吗?"}
+    Q1 -- "没有" --> END(["END"])
+    Q1 -- "有" --> Q2{"本轮需要审批吗?"}
+    Q2 -- "不需要" --> TOOLS["tools_node"]
+    Q2 -- "需要" --> AP["approval_node"]
+    AP -- "interrupt()" --> WAIT["等待 UI 决策<br/>Command(resume=...)"]
+    WAIT --> TOOLS
+    TOOLS --> AG
 ```
 
 浅浅翻译一下：
 
 一次用户提问，在 LangGraph 里实际是这样流动的：
 
-```
-用户消息进入图
-   ↓
-[agent 节点] 模型思考：要不要调工具？调哪个？参数是什么？
-   ↓
-    ├─ 不调工具 → 直接结束，把回答交给用户
-    │
-    └─ 要调工具 → 判断这批调用是否涉及敏感操作
-              ├─ 不敏感 → 直接进 tools
-              └─ 敏感   → 先进 approval，图挂起，等人点头
-                                ↓
-                          [tools 节点] 真正执行工具，把结果写回对话
-                                ↓
-                          回到 agent，模型看到结果继续判断
+```mermaid
+%%{init: {"flowchart": {"nodeSpacing": 34, "rankSpacing": 34, "wrappingWidth": 430}}}%%
+flowchart TB
+    IN["用户消息进入图"]
+    AG["agent 节点<br/>模型思考：要不要调工具？调哪个？参数是什么？"]
+    DONE["直接结束，把回答交给用户"]
+    J["判断这批调用是否涉及敏感操作"]
+    T["tools 节点<br/>真正执行工具，把结果写回对话"]
+    AP["先进 approval，图挂起，等人点头"]
+    BACK["回到 agent，模型看到结果继续判断"]
+
+    IN --> AG
+    AG -- "不调工具" --> DONE
+    AG -- "要调工具" --> J
+    J -- "不敏感" --> T
+    J -- "敏感" --> AP
+    AP --> T
+    T --> BACK
 ```
 
 这里面有设计三个节点（agent_node \ approval_node \ tools_node），而三个节点各自负责流程中的**一个阶段**。
@@ -196,21 +197,20 @@ Checkpointer同样也扮演着非常主要的角色。说简单点，就是“�
 
 **一次运行的 checkpoint 时序**
 
-```
-[input]  写入初始快照（messages = history + 本轮用户输入）
-   ↓
-[loop]   agent 节点 → 写入快照（messages 多了一条 AIMessage，带 tool_calls）
-   ↓
-[loop]   approval 节点执行到 interrupt() → 抛异常 → 写入挂起快照
-         ↑ 外层拿到 __interrupt__，UI 弹审批
-         ↓ 用户点“批准”
-[loop]   Command(resume) → 读回挂起快照 → 重放 approval 节点 → 返回 decision
-   ↓
-[loop]   tools 节点 → 写入快照（messages 多了 ToolMessage）
-   ↓
-[loop]   agent 节点 → 无 tool_calls → 走向 END
-   ↓
-[loop]   最终快照 ← tsec_runner 用 aget_state 读这里
+```mermaid
+%%{init: {"flowchart": {"nodeSpacing": 30, "rankSpacing": 26, "wrappingWidth": 520}}}%%
+flowchart TB
+    S1["[input] 写入初始快照<br/>messages = history + 本轮用户输入"]
+    S2["[loop] agent 节点 → 写入快照<br/>messages 多了一条 AIMessage，带 tool_calls"]
+    S3["[loop] approval 节点执行到 interrupt()<br/>抛异常 → 写入挂起快照"]
+    S4["[loop] Command(resume) → 读回挂起快照<br/>重放 approval 节点 → 返回 decision"]
+    S5["[loop] tools 节点 → 写入快照<br/>messages 多了 ToolMessage"]
+    S6["[loop] agent 节点 → 无 tool_calls → 走向 END"]
+    S7["最终快照 ← tsec_runner 用 aget_state 读这里"]
+
+    S1 --> S2 --> S3
+    S3 -- "外层拿到 __interrupt__，UI 弹审批<br/>用户点「批准」" --> S4
+    S4 --> S5 --> S6 --> S7
 ```
 
 

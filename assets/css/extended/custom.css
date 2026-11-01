@@ -322,3 +322,13 @@ body {
 .md-content table { /* table-font-unify */
   font-size: 1em;
 }
+
+/* ---------- 14. 文章顶部去掉面包屑，标题上提 ----------
+   只在文章页生效；归档 / 标签等列表页的面包屑保留 */
+.post-single .post-header > .breadcrumbs {
+  display: none;
+}
+
+.post-single .post-header {
+  margin-top: 6px;
+}
