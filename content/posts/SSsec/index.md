@@ -2,7 +2,7 @@
 title: "AI for Security：SSsec（攻防Agent的初步开发）"
 date: 2026-11-02
 draft: false
-description: "SSsec 是一个面向授权安全测试的本地桌面 AI Agent Harness：PySide6 界面 + LangGraph / LangChain 运行时。本文记录它的架构设计、审批旁路与实现取舍。"
+description: "SSsec 是一个面向安全测试的本地桌面 AI Agent Harness：PySide6 界面 + LangGraph / LangChain 运行。本文记录它的架构设计、审批旁路与实现取舍。"
 summary: "首个版本的 AI 自主渗透测试系统：LangGraph 状态机、人工审批旁路、Checkpointer 断点恢复，以及五个内置工具的设计取舍。"
 tags: ["AI 安全", "Agent", "LangGraph", "渗透测试"]
 categories: ["项目"]
@@ -189,7 +189,7 @@ Checkpointer同样也扮演着非常主要的角色。说简单点，就是“�
 
 而Checkpointer就是图能够 “暂停并继续” 的前提条件。
 
-说的官方一点：Checkpointer 是 LangGraph 的**状态快照存储器**。图每推进一步（一个 superstep），它就把当时的完整状态按 `thread_id` 存一份；之后可以用同一份快照恢复、读取、回滚。解决了 “图运行在内存里，停下来，状态就丢失” 的问题。没有它，`interrupt()` 无法工作。官方实现里也明确要求：要使用 interrupt，必须启用 checkpointer，因为该特性依赖持久化的图状态。
+说的官方一点：Checkpointer 是 LangGraph 的**状态快照存储器**。图每推进一步（一个 superstep），它就把当时的完整状态按 `thread_id` 存一份；之后可以用同一份快照恢复、读取、回滚。解决了图运行在内存里，停下来状态就丢失的问题。没有它，`interrupt()` 无法工作。官方实现里也明确要求：要使用 interrupt，必须启用 checkpointer，因为该特性依赖持久化的图状态。
 
 概念性的东西就不多讲了，讲讲它在本项目的具体使用：
 
@@ -527,6 +527,6 @@ sequenceDiagram
 
 从10月份开始打算做 AI 安全的时候，我就在纠结要从哪个分支开始——**AI for Security** or **Security for AI**。思虑再三后还是决定先设计一款 **Pentest Agent**（AI for Security）。其实改变学习路线是一件很艰难的事情，从去年冬天腾讯举办第一届智能攻防挑战赛开始，我就一直在关注这条赛道，犹豫再三，迟迟未行动。对于那时的我而言，补充完传统安全的技术栈，尽早进入安全大厂实习才是优先级最高的事。
 
-我不知道攻防Agent会不会是安全行业的机遇，投入自己的时间和精力在上面也许会导致南辕北辙的局面。我把它看做一场赌局，而我将把未来三个月的时间作为赌注。这半个月来，我都在学习 Agent 开发，包括 LangChain、LangGraph 这种主流框架，说实话我并没有吃的很透，完全是一个初学者的水平，包括这个项目涉及到的知识点也很浅。我找不到太多融合安全的 Agent 项目（保姆级的那种），只能依葫芦画瓢，像模像样的做着。
+我不知道攻防Agent会不会是安全行业的新机遇，投入自己的时间和精力在上面也许会导致南辕北辙的局面。我把它看做一场赌局，而我将把未来三个月的时间作为赌注。这半个月来，我都在学习 Agent 开发，包括 LangChain、LangGraph 这种主流框架，说实话我并没有吃的很透，完全是一个初学者的水平，包括这个项目涉及到的知识点也很浅。我找不到太多融合安全的 Agent 项目（保姆级的那种），只能依葫芦画瓢，像模像样的做着。
 
-SSsec 的槽点还有很多，甚至称不上是一个合格的作品。但我也借此机会更新了自己的 github 和个人博客，在这条路上踩下了油门。
+SSsec 的槽点还有很多，甚至称不上是一个合格的作品。但我也借此机会更新了自己的 Github 和个人博客，在这条路上踩下了油门。
