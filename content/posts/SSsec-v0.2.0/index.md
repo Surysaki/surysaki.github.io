@@ -828,9 +828,9 @@ _FLAG_REJECT_MARKERS = ("...", "…", "***", "xxx", "todo", "your_flag")
 
 
 
-### 一次用户消息的完整时序
+## 一次用户消息的完整时序
 
-#### 调用栈流程图
+### 调用栈流程图
 
 ```mermaid
 flowchart TD
@@ -879,7 +879,7 @@ flowchart TD
     class F1,S fin
 ```
 
-#### 跨线程序列图
+### 跨线程序列图
 
 ```mermaid
 sequenceDiagram
