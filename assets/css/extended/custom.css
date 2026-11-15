@@ -183,9 +183,12 @@
 }
 
 /* 手机上 6 个参与者的时序图缩到 320px 就看不清了：
-   给个下限，让它横向滚动而不是无限缩小 */
+   给个下限，让它横向滚动而不是无限缩小。
+   只对「本来就很宽」的图生效 —— extend_head.html 画完后按 viewBox 宽度
+   给宽图打上 mermaid-wide；窄而高的流程图（如 interrupt 冒泡）不加，
+   否则 272px 宽的图被撑到 460px，高度会从 1456px 涨到 2400+ px。 */
 @media (max-width: 768px) {
-  .md-content pre.mermaid svg {
+  .md-content pre.mermaid.mermaid-wide svg {
     min-width: 460px;
   }
 }
@@ -317,9 +320,21 @@ body {
 
 
 /* ---------- 13. 表格字号与正文一致 ----------
-   实测 td/th 与正文同为 16px（继承 .md-content），
-   这里显式钉住，避免主题升级后又变大 */
+   主题给 td/th 的 line-height 是 1.5（正文 1.8），行内 code 又是 0.88em，
+   参数表整张看下来就比正文小一号。这里把字号、行高、表格里的 code
+   都拉回正文的量级。
+   选择器照抄主题（table:not(...)），靠 custom.css 在后面加载压过它。 */
 .md-content table { /* table-font-unify */
+  font-size: 1em;
+}
+
+.md-content table th,
+.md-content table:not(.highlight table, .gist .highlight) td {
+  font-size: 1em;
+  line-height: 1.7;
+}
+
+.md-content table :not(pre) > code {
   font-size: 1em;
 }
 

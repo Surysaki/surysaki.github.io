@@ -48,6 +48,12 @@
           n.innerHTML = res.svg;
           n.setAttribute('data-processed', 'true');
           if (res.bindFunctions) res.bindFunctions(n);
+
+          // 按 viewBox 原始宽度区分「宽图」：只有宽图才在手机端给 min-width
+          // （见 custom.css 第 9 节）。窄而高的流程图被撑大会占满好几屏。
+          var svg = n.querySelector('svg');
+          var vb = svg && svg.viewBox ? svg.viewBox.baseVal : null;
+          if (vb && vb.width > 460) n.classList.add('mermaid-wide');
         }).catch(function (err) {
           n.removeAttribute('data-processed');
           n.dataset.err = (err && err.message) ? err.message : String(err);
