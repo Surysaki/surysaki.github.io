@@ -319,13 +319,13 @@ body {
 
 
 
-/* ---------- 13. 表格字号与正文一致 ----------
-   主题给 td/th 的 line-height 是 1.5（正文 1.8），行内 code 又是 0.88em，
-   参数表整张看下来就比正文小一号。这里把字号、行高、表格里的 code
-   都拉回正文的量级。
+/* ---------- 13. 表格字号比正文小半档 ----------
+   正文 16px，表格统一 15px（0.9375em）：比正文略小、更紧凑，
+   又不会像主题默认那样连行内 code 一起缩到 0.88em（≈14px）显得小一号。
+   line-height 比主题的 1.5 松一点，整块不至于憋。
    选择器照抄主题（table:not(...)），靠 custom.css 在后面加载压过它。 */
 .md-content table { /* table-font-unify */
-  font-size: 1em;
+  font-size: 0.9375em; /* 16px × 0.9375 = 15px */
 }
 
 .md-content table th,
@@ -334,6 +334,7 @@ body {
   line-height: 1.7;
 }
 
+/* 表格里的行内 code 跟着表格字号走，不再单独缩到 0.88em */
 .md-content table :not(pre) > code {
   font-size: 1em;
 }
